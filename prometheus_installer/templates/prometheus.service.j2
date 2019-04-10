@@ -9,6 +9,7 @@ Restart=always
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStart={{ prometheus_bin_path }}prometheus \
 --config.file={{ prometheus_conf_path }}prometheus.yml \
+--web.listen-address={{ prometheus_url }} \
 --storage.tsdb.path={{ prometheus_data_path }} \
 --web.console.templates={{ prometheus_conf_path }}consoles \
 --web.console.libraries={{ prometheus_conf_path }}console_libraries \
