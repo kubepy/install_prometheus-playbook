@@ -1,6 +1,6 @@
 # tasks file for prometheus_installer
 
-- name: Unarchive {{ prometheus_filename }} to remote {{ prometheus_bin_path }} (1/2)
+- name: Unarchive {{ prometheus_filename }} to remote {{ prometheus_bin_path }} (1/2 tasks)
   unarchive:
     src: "{{ prometheus_filename }}"
     dest: "{{ prometheus_bin_path }}"
@@ -17,7 +17,7 @@
     group: root
   notify: Restart prometheus service
 
-- name: Unarchive {{ prometheus_filename }} to remote {{ prometheus_conf_path }} (2/2)
+- name: Unarchive {{ prometheus_filename }} to remote {{ prometheus_conf_path }} (2/2 tasks)
   unarchive:
     src: "{{ prometheus_filename }}"
     dest: "{{ prometheus_conf_path }}"
