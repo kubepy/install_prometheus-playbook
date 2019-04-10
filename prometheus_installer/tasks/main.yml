@@ -1,0 +1,17 @@
+---
+# tasks file for prometheus_installer
+
+- name: Install prometheus
+  include_tasks: install.yml
+  when: >
+    (( prometheus_install | bool ) and ( ansible_distribution == "RedHat" and ansible_distribution_major_version == '7' ))
+    or
+    (( prometheus_install | bool ) and ( ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' ))
+
+- name: Uninstall Prometheus
+  include_tasks: uninstall.yml
+  when: >
+    (( not prometheus_install | bool ) and ( ansible_distribution == "RedHat" and ansible_distribution_major_version == '7' ))
+    or
+    (( not prometheus_install | bool ) and ( ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' ))
+

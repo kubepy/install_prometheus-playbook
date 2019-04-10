@@ -1,0 +1,5 @@
+---
+- hosts: prometheus
+  gather_facts: true
+  roles:
+    - prometheus_installer

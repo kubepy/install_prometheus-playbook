@@ -1,0 +1,83 @@
+# tasks file for prometheus_installer
+
+- name: Unarchive {{ prometheus_filename }} to remote {{ prometheus_bin_path }} (1/2)
+  unarchive:
+    src: "{{ prometheus_filename }}"
+    dest: "{{ prometheus_bin_path }}"
+    exclude:
+      - LICENSE
+      - NOTICE
+      - consoles
+      - console_libraries
+      - prometheus.yml
+    extra_opts:
+      - --strip-components=1
+    mode: u=rwx,g=rx,o=rx
+    owner: root
+    group: root
+  notify: Restart prometheus service
+
+- name: Unarchive {{ prometheus_filename }} to remote {{ prometheus_conf_path }} (2/2)
+  unarchive:
+    src: "{{ prometheus_filename }}"
+    dest: "{{ prometheus_conf_path }}"
+    exclude:
+      - LICENSE
+      - NOTICE
+      - promtool
+      - prometheus
+      - prometheus.yml
+    extra_opts:
+      - --strip-components=1
+    mode: u=rwx,g=rx,o=rx
+    owner: root
+    group: root
+  notify: Restart prometheus service
+
+- name: Ensure {{ prometheus_conf_path }} path has been created
+  file:
+    path: "{{ prometheus_conf_path }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: root
+    group: root
+
+- name: Copy prometheus.service to /etc/systemd/system/
+  template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+  notify: Restart prometheus service
+
+- name: Reload systemd daemon for prometheus.service
+  systemd:
+    daemon_reload: yes
+
+- name: Copy prometheus to {{ prometheus_etc_path }}
+  template:
+    src: prometheus.j2
+    dest: "{{ prometheus_etc_path }}prometheus"
+  notify: Reload prometheus service
+
+- name: Copy prometheus.yml to {{ prometheus_conf_path }}
+  template:
+    src: prometheus.yml.j2
+    dest: "{{ prometheus_conf_path }}prometheus.yml"
+  notify: Reload prometheus service
+
+- name: Collect facts about system services
+  service_facts:
+
+- name: Ensure 9090 port open when firewalld is started
+  firewalld:
+    port: 9090/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  when: ansible_facts.services['firewalld.service'] is defined
+  ignore_errors: yes
+
+- name: Ensure prometheus service is started and enabled
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
