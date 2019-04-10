@@ -1,0 +1,52 @@
+---
+# tasks file for nginx_reverse_proxy
+
+- name: Install nginx service
+  yum:
+    name: nginx
+    state: installed
+
+- name: Create self-signed certificate, if configured
+  command: "openssl req -new -x509 -sha256 -days 3650 -nodes -subj '/CN={{ prometheus_hostname }}' -keyout {{ item.key }} -out {{ item.cert }}"
+  args:
+    creates: "{{ item.cert }}"
+  with_items: "{{ self_signed_certs }}"
+
+- name: Generate htpasswd for prometheus login
+  htpasswd:
+    path: /etc/nginx/prometheus_htpasswd
+    name: "{{ prometheus_user }}"
+    password: "{{ prometheus_password }}"
+    mode: u=rw,g=r,o=r
+    owner: root
+    group: root
+
+- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+  seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+  ignore_errors: yes
+
+- name: Allow nginx to listen on tcp port 9090,9093
+  seport:
+    ports: 9090,9093
+    proto: tcp
+    setype: http_port_t
+    state: present
+  ignore_errors: yes
+
+- name: Copy nginx configuration to /etc/nginx/conf.d/prometheus.conf
+  template:
+    src: prometheus.conf.j2
+    dest: /etc/nginx/conf.d/prometheus.conf
+    mode: u=rw,g=r,o=r
+    owner: root
+    group: root
+  notify: Reload nginx service
+
+- name: Ensure nginx service is started and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes

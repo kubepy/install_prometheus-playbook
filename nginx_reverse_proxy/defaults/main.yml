@@ -1,0 +1,9 @@
+---
+# defaults file for nginx_reverse_proxy
+nginx_install: True
+prometheus_user: admin
+prometheus_password: redhat
+prometheus_hostname: localhost
+self_signed_certs:
+  - key: /etc/nginx/prometheus_cert.key
+    cert: /etc/nginx/prometheus_cert.crt

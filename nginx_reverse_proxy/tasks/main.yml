@@ -1,0 +1,16 @@
+---
+# tasks file for nginx_reverse_proxy
+
+- name: Install nginx
+  include_tasks: install.yml
+  when: >
+    (( nginx_install | bool ) and ( ansible_distribution == "RedHat" and ansible_distribution_major_version == '7' )) 
+    or  
+    (( nginx_install | bool ) and ( ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' ))
+
+- name: Uninstall nginx
+  include_tasks: uninstall.yml
+  when: >
+    (( not nginx_install | bool ) and ( ansible_distribution == "RedHat" and ansible_distribution_major_version == '7' ))
+    or
+    (( not nginx_install | bool ) and ( ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' ))
