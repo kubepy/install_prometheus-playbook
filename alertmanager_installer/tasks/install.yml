@@ -1,0 +1,68 @@
+---
+# tasks file for alertmanager_installer
+
+- name: Unarchive {{ alertmanager_filename }} to remote {{ alertmanager_bin_path }}
+  unarchive:
+    src: "{{ alertmanager_filename }}"
+    dest: "{{ alertmanager_bin_path }}"
+    exclude:
+      - LICENSE
+      - NOTICE
+      - alertmanager.yml
+    extra_opts:
+      - --strip-components=1
+    mode: u=rwx,g=rx,o=rx
+    owner: root
+    group: root
+  notify: Restart alertmanager service
+
+- name: Ensure {{ alertmanager_conf_path }} path has been created
+  file:
+    path: "{{ alertmanager_conf_path }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: root
+    group: root
+
+- name: Copy alertmanager.yml to {{ alertmanager_conf_path }}
+  template:
+    src: alertmanager.yml.j2
+    dest: "{{ alertmanager_conf_path }}alertmanager.yml"
+  notify: Reload alertmanager service
+
+- name: Copy alertmanager.service to /etc/systemd/system/
+  template:
+    src: alertmanager.service.j2
+    dest: /etc/systemd/system/alertmanager.service
+  notify: Restart alertmanager service
+
+- name: Reload systemd daemon for alertmanager.service
+  systemd:
+    daemon_reload: yes
+
+- name: Copy alertmanager to {{ alertmanager_etc_path }}
+  template:
+    src: alertmanager.j2
+    dest: "{{ alertmanager_etc_path }}alertmanager"
+    mode: u=rw,g=r,o=r
+    owner: root
+    group: root
+  notify: Reload alertmanager service
+
+- name: Collect facts about system services
+  service_facts:
+
+- name: Ensure 9093 port open when firewalld is started
+  firewalld:
+    port: 9093/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  when: ansible_facts.services['firewalld.service'] is defined
+  ignore_errors: yes
+
+- name: Ensure alertmanager service is started and enabled
+  service:
+    name: alertmanager
+    state: started
+    enabled: yes

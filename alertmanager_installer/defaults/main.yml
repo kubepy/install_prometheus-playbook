@@ -1,0 +1,19 @@
+---
+# defaults file for alertmanager_installer
+
+alertmanager_install: True
+alertmanager_filename: alertmanager-0.16.1.linux-amd64.tar.gz 
+alertmanager_etc_path: /etc/default/
+alertmanager_conf_path: /etc/prometheus/
+alertmanager_var_path: /var/lib/prometheus/
+alertmanager_data_path: "{{ alertmanager_var_path }}alertmanager"
+alertmanager_bin_path: /usr/local/bin/
+alertmanager_url: localhost:9093
+alertmanager_opts: "--config.file={{ alertmanager_conf_path }}alertmanager.yml"
+
+smtp_from: null
+smtp_smarthost: null
+smtp_auth_username: null
+smtp_auth_password: null
+smtp_to:
+  - root@localhost

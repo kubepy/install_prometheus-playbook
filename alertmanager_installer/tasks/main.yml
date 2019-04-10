@@ -1,0 +1,16 @@
+---
+# tasks file for alertmanager_installer
+
+- name: Install alertmanager
+  include_tasks: install.yml
+  when: >
+    (( alertmanager_install | bool ) and ( ansible_distribution == "RedHat" and ansible_distribution_major_version == '7' )) 
+    or  
+    (( alertmanager_install | bool ) and ( ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' ))
+
+- name: Uninstall alertmanager
+  include_tasks: uninstall.yml
+  when: >
+    (( not alertmanager_install | bool ) and ( ansible_distribution == "RedHat" and ansible_distribution_major_version == '7' ))
+    or
+    (( not alertmanager_install | bool ) and ( ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' ))

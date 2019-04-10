@@ -1,0 +1,17 @@
+[Unit]
+Description=Prometheus Alertmanager
+Documentation=https://github.com/prometheus/alertmanager
+After=network.target
+
+[Service]
+EnvironmentFile=-{{ alertmanager_etc_path }}alertmanager
+Restart=always
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart={{ alertmanager_bin_path }}alertmanager \
+--config.file={{ alertmanager_conf_path }}alertmanager.yml \
+--storage.path={{ alertmanager_data_path }} \
+--web.listen-address={{ alertmanager_url }} \
+$ALERTMANAGER_OPTS
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+---
+# handlers file for alertmanager_installer
+
+- name: Restart alertmanager service
+  service:
+    name: alertmanager
+    state: restarted
+
+- name: Reload alertmanager service
+  service:
+    name: alertmanager
+    state: reloaded
