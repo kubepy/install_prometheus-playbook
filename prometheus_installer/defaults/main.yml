@@ -7,9 +7,12 @@ prometheus_var_path: /var/lib/prometheus/
 prometheus_data_path: "{{ prometheus_var_path }}data"
 prometheus_conf_path: /etc/prometheus/
 prometheus_bin_path: /usr/local/bin/
-prometheus_opts: '--storage.tsdb.retention=15d --web.enable-lifecycle'
-alertmanager_local_api: 127.0.0.1:9093
+alertmanager_url: localhost:9093
+prometheus_url: localhost:9090
+prometheus_opts: "--storage.tsdb.retention=15d --web.enable-lifecycle --web.listen-address={{ prometheus_url }}"
 rule_files_conf:
   - alert_rules.yml
-custom_sd_conf:
-  - custom_sd.yml
+wmi_exporter_sd_conf:
+  - wmi_exporter.yml
+node_exporter_sd_conf:
+  - node_exporter.yml

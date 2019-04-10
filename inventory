@@ -2,4 +2,3 @@
 localhost ansible_connection=local
 
 [prometheus:vars]
-rometheus_opts='--storage.tsdb.retention=15d --web.listen-address=0.0.0.0:9090 --web.enable-lifecycle'

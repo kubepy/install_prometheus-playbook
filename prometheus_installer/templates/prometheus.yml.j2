@@ -9,7 +9,7 @@ alerting:
   alertmanagers:
   - static_configs:
     - targets:
-      - {{ alertmanager_local_api }} 
+      - {{ alertmanager_url }} 
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
@@ -23,9 +23,16 @@ scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
+  - job_name: 'wmi_exporter'
+    file_sd_configs:
+    - files:
+{% for custom_sd in wmi_exporter_sd_conf %}
+      - "{{ custom_sd }}"
+{% endfor %}
+
   - job_name: 'node_exporter'
     file_sd_configs:
     - files:
-{% for custom_sd in custom_sd_conf %}
+{% for custom_sd in node_exporter_sd_conf %}
       - "{{ custom_sd }}"
 {% endfor %}
