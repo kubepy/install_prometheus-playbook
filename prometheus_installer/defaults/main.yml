@@ -9,7 +9,7 @@ prometheus_conf_path: /etc/prometheus/
 prometheus_bin_path: /usr/local/bin/
 alertmanager_url: localhost:9093
 prometheus_url: localhost:9090
-prometheus_opts: "--storage.tsdb.retention=15d --web.enable-lifecycle"
+prometheus_opts: "--storage.tsdb.retention=15d --web.enable-lifecycle --web.external-url=https://{{ ansible_default_ipv4['address'] }}:9090"
 rule_files_conf:
   - alert_rules.yml
 wmi_exporter_sd_conf:

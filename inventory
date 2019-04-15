@@ -2,3 +2,10 @@
 localhost ansible_connection=local
 
 [prometheus:vars]
+alertmanager_opts="--cluster.advertise-address=127.0.0.1:9093 --web.external-url=https://{{ ansible_default_ipv4['address'] }}:9093"
+smtp_from=postmaster@api.gb.net
+smtp_smarthost=smtp.mailgun.org:587
+smtp_auth_username=postmaster@api.gb.net
+smtp_auth_password=5a01690af0dee0583535aca572b3fc39-e89319ab-412758e2
+smtp_to=['test@api.gb.net']
+

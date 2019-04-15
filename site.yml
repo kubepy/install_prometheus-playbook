@@ -5,3 +5,4 @@
     - prometheus_installer
     - alertmanager_installer
     - nginx_reverse_proxy
+    - rename_ansible_log

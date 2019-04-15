@@ -9,7 +9,7 @@ alertmanager_var_path: /var/lib/prometheus/
 alertmanager_data_path: "{{ alertmanager_var_path }}alertmanager"
 alertmanager_bin_path: /usr/local/bin/
 alertmanager_url: localhost:9093
-alertmanager_opts: "--config.file={{ alertmanager_conf_path }}alertmanager.yml"
+alertmanager_opts: "--web.external-url=https://{{ ansible_default_ipv4['address'] }}:9093"
 
 smtp_from: null
 smtp_smarthost: null
