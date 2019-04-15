@@ -1,5 +1,15 @@
 ---
 # tasks file for alertmanager_installer
+- name: Ensure alertmanager path has been created
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+    owner: root
+    group: root
+  with_items:
+    - "{{ alertmanager_conf_path }}"
+    - "{{ alertmanager_var_path }}" 
 
 - name: Unarchive {{ alertmanager_filename }} to remote {{ alertmanager_bin_path }}
   unarchive:
@@ -15,14 +25,6 @@
     owner: root
     group: root
   notify: Restart alertmanager service
-
-- name: Ensure {{ alertmanager_conf_path }} path has been created
-  file:
-    path: "{{ alertmanager_conf_path }}"
-    state: directory
-    mode: u=rwx,g=rx,o=rx
-    owner: root
-    group: root
 
 - name: Copy alertmanager.yml to {{ alertmanager_conf_path }}
   template:
