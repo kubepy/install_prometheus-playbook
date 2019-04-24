@@ -12,6 +12,11 @@
     creates: "{{ item.cert }}"
   with_items: "{{ self_signed_certs }}"
 
+- name: Install the latest version of python2-passlib
+  yum:
+    name: python-passlib
+    state: present
+
 - name: Generate htpasswd for prometheus login
   htpasswd:
     path: /etc/nginx/prometheus_htpasswd
