@@ -13,6 +13,6 @@ prometheus_opts: "--storage.tsdb.retention=15d --web.enable-lifecycle --web.exte
 rule_files_conf:
   - alert_rules.yml
 wmi_exporter_sd_conf:
-  - wmi_exporter.yml
+  - wmi_exporter/*.yml
 node_exporter_sd_conf:
-  - node_exporter.yml
+  - node_exporter/*.yml
