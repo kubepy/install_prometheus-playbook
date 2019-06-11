@@ -30,9 +30,130 @@ scrape_configs:
       - "{{ custom_sd }}"
 {% endfor %}
 
+    relabel_configs:
+    - source_labels: ["alias"]
+      regex: '^(l|L).*'
+      replacement: 'lab-test'
+      target_label: 'env_type'
+    - source_labels: ["alias"]
+      regex: '^(cert|CERT).*'
+      replacement: 'stage'
+      target_label: 'env_type'
+    - source_labels: ["alias"]
+      regex: '^(p|P).*'
+      replacement: 'prod'
+      target_label: 'env_type'
+
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+1.*'
+      replacement: 'app'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+2.*'
+      replacement: 'web'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+3.*'
+      replacement: 'collaboration'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+5.*'
+      replacement: 'db'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+7.*'
+      replacement: 'infra'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+8.*'
+      replacement: 'file'
+      target_label: 'app_type'
+
+    - source_labels: ["instance"]
+      regex: '.*'
+      replacement: 'Windows'
+      target_label: 'os_type'
+
   - job_name: 'node_exporter'
     file_sd_configs:
     - files:
 {% for custom_sd in node_exporter_sd_conf %}
       - "{{ custom_sd }}"
 {% endfor %}
+
+    relabel_configs:
+    - source_labels: ["alias"]
+      regex: '^(tst|TST).*'
+      replacement: 'lab-test'
+      target_label: 'env_type'
+    - source_labels: ["alias"]
+      regex: '^(cer|CER).*'
+      replacement: 'stage'
+      target_label: 'env_type'
+    - source_labels: ["alias"]
+      regex: '^(ose|OSER).*'
+      replacement: 'prod'
+      target_label: 'env_type'
+    - source_labels: ["alias"]
+      regex: '^(pose|POSE).*'
+      replacement: 'prod'
+      target_label: 'env_type'
+    - source_labels: ["alias"]
+      regex: '^(tose|TOSE).*'
+      replacement: 'lab-test'
+      target_label: 'env_type'
+    - source_labels: ["alias"]
+      regex: '^(dose|DOSE).*'
+      replacement: 'lab-test'
+      target_label: 'env_type'
+
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+1.*'
+      replacement: 'app'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+[2-3].*'
+      replacement: 'web'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+4.*'
+      replacement: 'hadoop'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+5.*'
+      replacement: 'app'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+[6-7].*'
+      replacement: 'db'
+      target_label: 'app_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]+0.*'
+      replacement: 'infra'
+      target_label: 'app_type'
+
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]..(r|R).*'
+      replacement: 'RHEL'
+      target_label: 'os_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]..(l|L).*'
+      replacement: 'SELS'
+      target_label: 'os_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]...(l|L).*'
+      replacement: 'SELS'
+      target_label: 'os_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]..(c|C).*'
+      replacement: 'CentOS'
+      target_label: 'os_type'
+    - source_labels: ["alias"]
+      regex: '^[a-zA-Z]..(u|U).*'
+      replacement: 'Ubuntu'
+      target_label: 'os_type'
+    - source_labels: ["alias"]
+      regex: '.*(vsh|VSH).*'
+      replacement: 'esxi'
+      target_label: 'os_type'
+
