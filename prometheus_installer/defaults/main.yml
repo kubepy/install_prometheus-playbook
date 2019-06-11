@@ -16,3 +16,5 @@ wmi_exporter_sd_conf:
   - wmi_exporter/*.yml
 node_exporter_sd_conf:
   - node_exporter/*.yml
+vmware_exporter_sd_conf:
+  - vcenter.example.com
