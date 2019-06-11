@@ -23,7 +23,36 @@ scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
-  - job_name: 'wmi_exporter'
+  - job_name: 'vmware_exporter'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+{% for custom_sd in vmware_exporter_sd_conf %}
+        - "{{ custom_sd }}"
+{% endfor %}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: localhost:9272
+      - source_labels: ["instance"]
+        target_label: 'alias'
+      - source_labels: ["instance"]
+        regex: '.*'
+        replacement: 'esxi'
+        target_label: 'os_type'
+      - source_labels: ["instance"]
+        regex: '.*'
+        replacement: 'prod'
+        target_label: 'env_type'
+      - source_labels: ["instance"]
+        regex: '.*'
+        replacement: 'infra'
+        target_label: 'app_type'
+
+- job_name: 'wmi_exporter'
     file_sd_configs:
     - files:
 {% for custom_sd in wmi_exporter_sd_conf %}
