@@ -52,7 +52,7 @@ scrape_configs:
         replacement: 'infra'
         target_label: 'app_type'
 
-- job_name: 'wmi_exporter'
+  - job_name: 'wmi_exporter'
     file_sd_configs:
     - files:
 {% for custom_sd in wmi_exporter_sd_conf %}
