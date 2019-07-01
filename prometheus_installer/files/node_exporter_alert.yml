@@ -1,0 +1,84 @@
+groups:
+- name: node_exporter
+  rules:
+  - alert: ExporterDown
+    expr: up == 0
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Exporter down (instance {{ $labels.instance }})"
+      description: "Prometheus exporter down\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: CpuLoad
+    expr: node_load15 / (count without (cpu, mode) (node_cpu_seconds_total{mode="system"})) > 2
+    for: 30m
+    labels:
+      severity: 2
+    annotations:
+      summary: "CPU load (instance {{ $labels.instance }})"
+      description: "CPU load (130m) is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Memory
+    expr: (((node_memory_MemTotal_bytes - node_memory_MemFree_bytes - node_memory_Cached_bytes - node_memory_Buffers_bytes) / (node_memory_MemTotal_bytes)) * 100) > 85
+    for: 30m
+    labels:
+      severity: 2
+    annotations:
+      summary: "Memory Used (instance {{ $labels.instance }})"
+      description: "Memory Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Swap Used
+    expr: (((node_memory_SwapTotal_bytes- node_memory_SwapFree_bytes) / node_memory_SwapTotal_bytes) * 100) > 75 
+    for: 30m
+    labels:
+      severity: 2
+    annotations:
+      summary: "Swap Used (instance {{ $labels.instance }})"
+      description: "Swap Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Filesystem Space Used
+    expr: ((node_filesystem_size_bytes{fstype=~"xfs|ext|cifs|nfs"} - node_filesystem_avail_bytes{fstype=~"xfs|ext|cifs|nfs"}) / node_filesystem_size_bytes{fstype=~"xfs|ext|cifs|nfs"}) * 100 > 80 
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Filesystem Space Used (instance {{ $labels.instance }})"
+      description: "Filesystem Space Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Filesystem Inodes Used
+    expr: node_filesystem_files_free / node_filesystem_files > 85
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Filesystem Inodes Used (instance {{ $labels.instance }})"
+      description: "Filesystem Inodes Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Process Open Files Used
+    expr: (process_open_fds / process_max_fds) * 100 > 85
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Process Open Files Used (instance {{ $labels.instance }})"
+      description: "Process Open Files Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: UnusualNetworkThroughputIn
+    expr: sum by (instance) (irate(node_network_receive_bytes_total[2m])) / 1024 / 1024 > 100
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Unusual network throughput in (instance {{ $labels.instance }})"
+      description: "Host network interfaces are probably receiving too much data (> 100 MB/s)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: UnusualNetworkThroughputOut
+    expr: sum by (instance) (irate(node_network_transmit_bytes_total[2m])) / 1024 / 1024 > 100
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Unusual network throughput out (instance {{ $labels.instance }})"
+      description: "Host network interfaces are probably sending too much data (> 100 MB/s)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+

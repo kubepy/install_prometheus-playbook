@@ -1,0 +1,48 @@
+groups:
+- name: wmi_exporter
+  rules:
+  - alert: Windows Nodes Disk Used
+    expr: 100.0 - 100 * ((wmi_logical_disk_free_bytes{} / 1000 / 1000 ) / (wmi_logical_disk_size_bytes{}  / 1024 / 1024)) > 80
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Windows Nodes Disk Used (instance {{ $labels.instance }})"
+      description: "Windows Nodes Disk Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Windows Nodes CPU Used
+    expr: 100 - (avg by (instance) (irate(wmi_cpu_time_total{mode="idle"}[1m])) * 100) > 90
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Windows Nodes CPU Used (instance {{ $labels.instance }})"
+      description: "Windows Nodes CPU Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Windows Nodes Memory Used
+    expr: 100*((wmi_cs_physical_memory_bytes - wmi_os_physical_memory_free_bytes) / wmi_cs_physical_memory_bytes ) > 85
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Windows Nodes Memory Used (instance {{ $labels.instance }})"
+      description: "Windows Nodes Memory Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Windows Nodes Virtual Memory Used
+    expr: 100*((wmi_os_virtual_memory_bytes - wmi_os_virtual_memory_free_bytes) / wmi_os_virtual_memory_bytes ) > 75
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Windows Nodes Virtual Memory Used (instance {{ $labels.instance }})"
+      description: "Windows Nodes Virtual Memory Used is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: Windows Nodes Net utilization Used
+    expr: (irate(wmi_net_bytes_total[30m]) / wmi_net_current_bandwidth/8) * 100 > 90 
+    for: 30m
+    labels:
+      severity: 1
+    annotations:
+      summary: "Windows Nodes Net utilization Used (instance {{ $labels.instance }})"
+      description: "Windows Nodes Virtual Net utilization is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+

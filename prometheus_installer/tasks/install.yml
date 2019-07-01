@@ -10,6 +10,7 @@
   with_items:
     - "{{ prometheus_conf_path }}"
     - "{{ prometheus_var_path }}"
+    - "{{ rule_files_conf_path }}"
 
 - name: Unarchive {{ prometheus_filename }} to remote {{ prometheus_bin_path }} (1/2 tasks)
   unarchive:
@@ -66,6 +67,14 @@
     src: prometheus.yml.j2
     dest: "{{ prometheus_conf_path }}prometheus.yml"
   notify: Reload prometheus service
+
+- name: Copy Alert Rules to {{ rule_files_conf_path }}
+  copy:
+    src: "{{ item }}"
+    dest: "{{ rule_files_conf_path }}"
+  with_items:
+    - node_exporter_alert.yml
+    - wmi_exporter_alert.yml 
 
 - name: Collect facts about system services
   service_facts:
