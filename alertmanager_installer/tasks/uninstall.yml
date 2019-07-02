@@ -1,0 +1,43 @@
+---
+# tasks file for alertmanager_installer
+
+- name: Ensure alertmanager service is stopped and disabled
+  service:
+    name: alertmanager
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Unarchive {{ alertmanager_filename }} to remote {{ alertmanager_bin_path }}
+  file:
+    state: absent
+    name: "{{ alertmanager_bin_path }}{{ item }}"
+  with_items:
+    - alertmanager
+    - amtool
+
+- name: Clean alertmanager.yml from {{ alertmanager_conf_path }}
+  file:
+    state: absent
+    name: "{{ alertmanager_conf_path }}alertmanager.yml"
+
+- name: Clean alertmanager.service from /etc/systemd/system/
+  file:
+    state: absent
+    name: /etc/systemd/system/alertmanager.service
+
+- name: Reload systemd daemon for alertmanager.service
+  systemd:
+    daemon_reload: yes
+
+- name: Collect facts about system services
+  service_facts:
+
+- name: Ensure 9093 port open when firewalld is disabled
+  firewalld:
+    port: 9093/tcp
+    permanent: true
+    state: disabled
+    immediate: true
+  when: ansible_facts.services['firewalld.service'] is defined
+  ignore_errors: yes

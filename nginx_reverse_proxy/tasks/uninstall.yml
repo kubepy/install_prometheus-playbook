@@ -1,0 +1,19 @@
+---
+# tasks file for nginx_reverse_proxy
+
+- name: Ensure nginx service is stopped and disabled
+  service:
+    name: nginx
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Remove nginx service
+  yum:
+    name: nginx
+    state: removed
+
+- name: Clean nginx configuration from /etc/nginx/conf.d/prometheus.conf
+  file:
+    state: absent
+    name: /etc/nginx/conf.d/prometheus.conf

@@ -1,0 +1,37 @@
+# tasks file for prometheus_installer
+
+- name: Ensure prometheus service is stopped and disabled
+  service:
+    name: prometheus
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Clean Prometheus from remote {{ prometheus_bin_path }}
+  file:
+    state: absent
+    name: "{{ prometheus_bin_path }}{{ item }}"
+  with_items:
+    - prometheus
+    - promtool 
+
+- name: Clean prometheus.service from /etc/systemd/system/
+  file:
+    state: absent
+    name: /etc/systemd/system/prometheus.service
+
+- name: Reload systemd daemon for prometheus.service
+  systemd:
+    daemon_reload: yes
+
+- name: Collect facts about system services
+  service_facts:
+
+- name: Ensure 9090 port open when firewalld is disabled
+  firewalld:
+    port: 9090/tcp
+    permanent: true
+    state: disabled
+    immediate: true
+  when: ansible_facts.services['firewalld.service'] is defined
+  ignore_errors: yes

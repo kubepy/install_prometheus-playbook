@@ -1,7 +1,7 @@
 ---
 # defaults file for alertmanager_installer
 
-alertmanager_install: True
+alertmanager_install: "{{ prometheus_install | default(True) }}"
 alertmanager_filename: alertmanager-0.16.1.linux-amd64.tar.gz 
 alertmanager_etc_path: /etc/default/
 alertmanager_conf_path: /etc/prometheus/

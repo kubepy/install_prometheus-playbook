@@ -1,6 +1,6 @@
 ---
 # defaults file for nginx_reverse_proxy
-nginx_install: True
+nginx_install: "{{ prometheus_install | default(True) }}"
 prometheus_user: admin
 prometheus_password: redhat
 prometheus_hostname: localhost
