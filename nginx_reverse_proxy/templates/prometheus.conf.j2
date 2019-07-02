@@ -2,7 +2,8 @@ server {
     listen {{ ansible_default_ipv4['address'] }}:9090 ssl;
     ssl_certificate prometheus_cert.crt;
     ssl_certificate_key prometheus_cert.key;
-    large_client_header_buffers 8 64k;
+    client_header_buffer_size 128k;
+    large_client_header_buffers 8 128k;
     location / {
         auth_basic "Authorization Required";
         auth_basic_user_file /etc/nginx/prometheus_htpasswd;
@@ -14,7 +15,8 @@ server {
     listen {{ ansible_default_ipv4['address'] }}:9093 ssl;
     ssl_certificate prometheus_cert.crt;
     ssl_certificate_key prometheus_cert.key;
-    large_client_header_buffers 8 64k;
+    client_header_buffer_size 128k;
+    large_client_header_buffers 8 128k;
     location / {
         auth_basic "Authorization Required";
         auth_basic_user_file /etc/nginx/prometheus_htpasswd;
